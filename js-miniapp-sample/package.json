@@ -1,0 +1,80 @@
+{
+  "name": "js-miniapp-sample",
+  "version": "1.22.0",
+  "description": "Mini App Sample for JavaScript SDK",
+  "dependencies": {
+    "@brightcove/react-player-loader": "^1.4.2",
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@material-ui/core": "^4.12.4",
+    "@material-ui/icons": "^4.11.3",
+    "@material-ui/lab": "^4.0.0-alpha.61",
+    "@mui/material": "^5.10.17",
+    "bowser": "^2.11.0",
+    "react": "^18.0.0",
+    "react-copy-to-clipboard": "^5.0.4",
+    "react-dom": "^18.0.0",
+    "react-redux": "^7.2.8",
+    "react-router-dom": "^6.3.0",
+    "react-scripts": "3.4.1",
+    "redux": "^4.1.2",
+    "redux-thunk": "^2.4.1",
+    "semver": "^7.5.2"
+  },
+  "scripts": {
+    "format": "prettier --config ./prettier.config.js --write 'src/**/*.js'",
+    "prettify": "prettier --config ./prettier.config.js --check src/**/*.js",
+    "lint": "eslint src/ --fix-dry-run",
+    "start": "react-scripts --openssl-legacy-provider start",
+    "build": "react-scripts build && npm run zip",
+    "dockerBuild": "cd ci && make build",
+    "eject": "react-scripts eject",
+    "flow": "flow",
+    "deleteUnsupportedBuildFiles": "(cd build; find . -type f -name \"*.txt\" -delete -o -name \".DS_Store\" -delete)",
+    "zip": "(npm run deleteUnsupportedBuildFiles; cd build; zip -r js-miniapp-sample.zip ./*)"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all",
+    "Chrome>=37",
+    "iOS>=11"
+  ],
+  "devDependencies": {
+    "eslint": "^8.29.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-react": "^7.31.11",
+    "flow-bin": "^0.121.0",
+    "flow-typed": "^3.7.0",
+    "husky": "^8.0.2",
+    "lint-staged": "^13.1.0",
+    "prettier": "^2.8.1",
+    "@mui/icons-material": "^5.11.16"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --write",
+      "eslint src/*.js --fix-dry-run"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rakutentech/js-miniapp.git"
+  },
+  "keywords": [
+    "rakuten",
+    "mini app",
+    "apps"
+  ],
+  "author": "Mini App Build Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rakutentech/js-miniapp/issues"
+  },
+  "homepage": ""
+}

@@ -1,0 +1,10 @@
+{
+  "extends": "gts/tsconfig-google.json",
+  "compilerOptions": {
+    "strict": false,
+    "target": "ES5",
+    "lib": ["es5", "dom"],
+    "esModuleInterop": true,
+    "moduleResolution": "node"
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "short_name": "Mini App",
+  "name": "JS MiniApp Sample",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff",
+
+  "reqPermissions": [
+    {
+      "name": "rakuten.miniapp.user.USER_NAME",
+      "reason": "__MANIFEST_userNameReason__"
+    },
+    {
+      "name": "rakuten.miniapp.user.PROFILE_PHOTO",
+      "reason": "__MANIFEST_profilePhotoReason__"
+    }
+  ],
+
+  "optPermissions": [
+    {
+      "name": "rakuten.miniapp.user.CONTACT_LIST",
+      "reason": "__MANIFEST_contactListReason__"
+    },
+    {
+      "name": "rakuten.miniapp.device.LOCATION",
+      "reason": "__MANIFEST_locationReason__"
+    },
+    {
+      "name": "rakuten.miniapp.user.ACCESS_TOKEN",
+      "reason": "__MANIFEST_accessTokenReason__"
+    },
+    {
+      "name": "rakuten.miniapp.user.action.SEND_MESSAGE",
+      "reason": "__MANIFEST_sendMessageReason__"
+    },
+    {
+      "name": "rakuten.miniapp.user.POINTS",
+      "reason": "__MANIFEST_pointsReason__"
+    },
+    {
+      "name": "rakuten.miniapp.device.FILE_DOWNLOAD",
+      "reason": "__MANIFEST_fileDownloadReason__"
+    }
+  ],
+
+  "accessTokenPermissions": [
+    {
+      "audience": "rae",
+      "scopes": ["idinfo_read_openid", "memberinfo_read_point"]
+    },
+    {
+      "audience": "api-c",
+      "scopes": ["your_service_scope_here"]
+    }
+  ],
+
+  "customMetaData": {
+    "provider": "__MANIFEST_provider__",
+    "description": "__MANIFEST_description__",
+    "fileSizeInMb": "2.3",
+    "importantNotice": "__MANIFEST_importantNotice__",
+    "termsLink": "https://www.example.com",
+    "privacyPolicyLink": "https://www.example.com"
+  }
+}

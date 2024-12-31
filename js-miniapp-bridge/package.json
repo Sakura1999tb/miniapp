@@ -1,0 +1,54 @@
+{
+  "name": "js-miniapp-bridge",
+  "version": "1.22.0",
+  "description": "Mini App JavaScript Bridge",
+  "dependencies": {},
+  "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "^1.0.2",
+    "@types/chai": "^4.2.11",
+    "@types/mocha": "^7.0.2",
+    "@types/node": "^10.0.3",
+    "@types/sinon": "^9.0.0",
+    "browserify": "^17.0.0",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "gts": "^1.1.2",
+    "mocha": "^7.1.1",
+    "mocha-multi": "^1.1.3",
+    "nyc": "^15.0.0",
+    "sinon": "^9.0.1",
+    "sinon-chai": "^3.5.0",
+    "source-map-support": "^0.5.21",
+    "ts-node": "^8.8.1",
+    "tslint": "^6.1.0",
+    "typescript": "^4.9.4"
+  },
+  "scripts": {
+    "lint": "gts check",
+    "clean": "gts clean",
+    "browserify-android": "browserify ./build/src/android/android-bridge.js > build/src/android/bridge.js && browserify ./build/src/android/android-log.js > build/src/android/log.js",
+    "browserify-ios": "browserify ./build/src/ios/ios-bridge.js > build/src/ios/bridge.js && browserify ./build/src/ios/ios-log.js > build/src/ios/log.js",
+    "compile": "tsc -p . && npm run browserify-android  && npm run browserify-ios",
+    "prebuild": "npm run clean && npm run lint",
+    "buildBridge": "npm run lint && npm run compile && npm run test",
+    "fix": "gts fix",
+    "test": "mocha test/**/*.spec.ts",
+    "coverage": "nyc npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rakutentech/js-miniapp.git"
+  },
+  "keywords": [
+    "rakuten",
+    "mini app",
+    "bridge",
+    "typescript"
+  ],
+  "author": "Mini App SDK Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rakutentech/js-miniapp/issues"
+  },
+  "homepage": "https://github.com/rakutentech/js-miniapp#readme"
+}

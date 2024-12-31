@@ -1,0 +1,71 @@
+{
+  "name": "js-miniapp-sdk",
+  "version": "1.22.0",
+  "description": "Mini App SDK for JavaScript",
+  "main": "build/miniapp.bundle.js",
+  "browser": "build/miniapp.bundle.js",
+  "module": "build/js-miniapp-sdk/src/index.js",
+  "types": "build/js-miniapp-sdk/src/index.d.ts",
+  "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "^1.0.2",
+    "@types/chai": "^4.2.11",
+    "@types/chai-as-promised": "^7.1.2",
+    "@types/mocha": "^7.0.2",
+    "@types/node": "^10.0.3",
+    "@types/sinon": "^9.0.0",
+    "browserify": "^17.0.0",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "gts": "^1.1.2",
+    "mocha": "^7.1.1",
+    "mocha-multi": "^1.1.3",
+    "nyc": "^15.0.0",
+    "sinon": "^9.0.1",
+    "sinon-chai": "^3.5.0",
+    "source-map-support": "^0.5.16",
+    "tinyify": "4.0.0",
+    "ts-node": "^8.8.1",
+    "tslint": "^6.1.3",
+    "typedoc": "^0.19.2",
+    "typedoc-plugin-markdown": "^3.0.11",
+    "typescript": "^4.9.4"
+  },
+  "scripts": {
+    "lint": "gts check",
+    "clean": "gts clean",
+    "compile": "tsc -p . && browserify ./build/js-miniapp-sdk/src/index.js --standalone MiniApp > build/miniapp.bundle.js -p tinyify",
+    "prebuild": "npm run clean && npm run lint",
+    "buildSdk": "npm run lint && npm run compile && npm run test",
+    "fix": "gts fix",
+    "test": "mocha test/**/*.spec.ts",
+    "coverage": "nyc npm test",
+    "version": "npx -c 'echo $npm_package_version'",
+    "docs": "scripts/docs.sh"
+  },
+  "files": [
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "package.json",
+    "build/js-miniapp-sdk/src",
+    "build/js-miniapp-bridge/src",
+    "build/miniapp.bundle.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rakutentech/js-miniapp.git"
+  },
+  "keywords": [
+    "rakuten",
+    "mini app",
+    "apps",
+    "typescript",
+    "mocha"
+  ],
+  "author": "Mini App SDK Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rakutentech/js-miniapp/issues"
+  },
+  "homepage": "https://github.com/rakutentech/js-miniapp#readme"
+}
