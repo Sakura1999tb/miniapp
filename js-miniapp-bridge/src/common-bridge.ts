@@ -4,26 +4,13 @@
  * Bridge for communicating with Mini App
  */
 
-import { AdTypes } from './types/ad-types';
-import { Contact } from './types/contact';
-import {
-  CustomPermission,
-  CustomPermissionResponse,
-} from './types/custom-permissions';
-import { DevicePermission } from './types/device-permission';
-import { DownloadFileHeaders } from './types/download-file-headers';
-import { HostEnvironmentInfo } from './types/host-environment-info';
 import { MessageToContact } from './types/message-to-contact';
-import { Points } from './types/points';
-import { Reward } from './types/response-types';
-import { ScreenOrientation } from './types/screen';
 import { CloseAlertInfo } from './types/close-alert';
 import {
   MiniAppSecureStorageEvents,
   MiniAppSecureStorageKeyValues,
   MiniAppSecureStorageSize,
 } from './types/secure-storage';
-import { ShareInfo } from './types/share-info';
 import { AccessTokenData, NativeTokenData } from './types/token-data';
 import { MiniAppError, parseMiniAppError } from './types/error-types';
 import { MiniAppResponseInfo } from './types/response-types/miniapp';
@@ -41,7 +28,6 @@ import {
 import { MiniAppPreferences } from './modules/miniapp-preferences';
 import { BrowserManager } from './modules/browser-manager';
 import { GalleryManager } from './modules/gallery-manager';
-import { UserProfileManager } from './modules/userprofile-manager';
 import { WebViewConfigManager } from './modules/webview-config-manager';
 
 /** @internal */
@@ -96,7 +82,6 @@ export class MiniAppBridge {
   preferences: MiniAppPreferences;
   browserManager: BrowserManager;
   galleryManager: GalleryManager;
-  userProfileManager: UserProfileManager;
   webviewConfigManager: WebViewConfigManager;
 
   constructor(executor: PlatformExecutor) {
@@ -106,7 +91,6 @@ export class MiniAppBridge {
     this.preferences = new MiniAppPreferences(executor);
     this.browserManager = new BrowserManager(executor);
     this.galleryManager = new GalleryManager(executor);
-    this.userProfileManager = new UserProfileManager(executor);
     this.webviewConfigManager = new WebViewConfigManager(executor);
 
     if (window) {
@@ -244,99 +228,6 @@ export class MiniAppBridge {
   }
 
   /**
-   * Associating requestCustomPermissions function to MiniAppBridge object
-   * @param [CustomPermissionType[] permissionTypes, Types of custom permissions that are requested
-   * using an Array including the parameters eg. name, description.
-   *
-   * For eg., Miniapps can pass the array of valid custom permissions as following
-   * [
-   *  {"name":"rakuten.miniapp.user.USER_NAME", "description": "Reason to request for the custom permission"},
-   *  {"name":"rakuten.miniapp.user.PROFILE_PHOTO", "description": "Reason to request for the custom permission"},
-   *  {"name":"rakuten.miniapp.user.CONTACT_LIST", "description": "Reason to request for the custom permission"}
-   * ]
-   */
-  requestCustomPermissions(permissionTypes: CustomPermission[]) {
-    return new Promise<CustomPermissionResponse>((resolve, reject) => {
-      return this.executor.exec(
-        'requestCustomPermissions',
-        { permissions: permissionTypes },
-        success => resolve(JSON.parse(success)),
-        error => reject(error)
-      );
-    });
-  }
-
-  /**
-   * Associating shareInfo function to MiniAppBridge object.
-   * This function returns the shared info action state.
-   * @param {info} The shared info object.
-   */
-  shareInfo(info: ShareInfo) {
-    return new Promise<string>((resolve, reject) => {
-      return this.executor.exec(
-        'shareInfo',
-        { shareInfo: info },
-        success => resolve(success),
-        error => reject(error)
-      );
-    });
-  }
-
-  /**
-   * Associating getContacts function to MiniAppBridge object.
-   * This function returns contact list from the user profile.
-   * (provided the rakuten.miniapp.user.CONTACT_LIST is allowed by the user)
-   * It returns error info if user had denied the custom permission
-   */
-  getContacts(isEncoded?) {
-    return new Promise<Contact[]>((resolve, reject) => {
-      return this.executor.exec(
-        'getContacts',
-        { isContactsEncodingRequired: isEncoded },
-        contacts => resolve(JSON.parse(contacts) as Contact[]),
-        error => reject(error)
-      );
-    });
-  }
-
-  /**
-   * Associating getAccessToken function to MiniAppBridge object.
-   * This function returns access token details from the host app.
-   * (provided the rakuten.miniapp.user.ACCESS_TOKEN is allowed by the user)
-   * It returns error info if user had denied the custom permission
-   * @param {string} audience the audience the MiniApp requests for the token
-   * @param {string[]} scopes the associated scopes with the requested audience
-   */
-  getAccessToken(audience: string, scopes: string[]) {
-    return new Promise<AccessTokenData>((resolve, reject) => {
-      return this.executor.exec(
-        'getAccessToken',
-        { audience, scopes },
-        tokenData => {
-          const nativeTokenData = JSON.parse(tokenData) as NativeTokenData;
-          resolve(new AccessTokenData(nativeTokenData));
-        },
-        error => reject(parseMiniAppError(error))
-      );
-    });
-  }
-
-  /**
-   * This function does not return anything back on success.
-   * @param {screenAction} The screen state that miniapp wants to set on device.
-   */
-  setScreenOrientation(screenAction: ScreenOrientation) {
-    return new Promise<string>((resolve, reject) => {
-      return this.executor.exec(
-        'setScreenOrientation',
-        { action: screenAction },
-        success => resolve(success),
-        error => reject(error)
-      );
-    });
-  }
-
-  /**
    * @param message The message to send to contact.
    * @returns Promise resolves with the contact id received a message.
    * Can also resolve with null response in the case that the message was not sent to a contact, such as if the user cancelled sending the message.
@@ -423,27 +314,6 @@ export class MiniAppBridge {
     });
   }
 
-  downloadFile(
-    filename: string,
-    url: string,
-    headers: DownloadFileHeaders
-  ): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-      return this.executor.exec(
-        'downloadFile',
-        { filename, url, headers },
-        id => {
-          if (id !== 'null' && id !== null) {
-            resolve(id);
-          } else {
-            resolve(null);
-          }
-        },
-        error => reject(parseMiniAppError(error))
-      );
-    });
-  }
-
   setSecureStorage(items: MiniAppSecureStorageKeyValues) {
     return new Promise<undefined>((resolve, reject) => {
       return this.executor.exec(
@@ -496,21 +366,6 @@ export class MiniAppBridge {
         responseData => {
           resolve(JSON.parse(responseData) as MiniAppSecureStorageSize);
         },
-        error => reject(parseMiniAppError(error))
-      );
-    });
-  }
-
-  /**
-   * @param alertInfo Close confirmation alert info.
-   * @see {setCloseAlert}
-   */
-  setCloseAlert(alertInfo: CloseAlertInfo) {
-    return new Promise<string>((resolve, reject) => {
-      return this.executor.exec(
-        'setCloseAlert',
-        { closeAlertInfo: alertInfo },
-        success => resolve(success),
         error => reject(parseMiniAppError(error))
       );
     });
@@ -746,20 +601,6 @@ export class MiniAppBridge {
       );
     });
   }
-  /**
-   * Associating getPhoneNumber function to MiniAppBridge object.
-   * This function returns phone number of the User
-   */
-  getPhoneNumber() {
-    return new Promise<string>((resolve, reject) => {
-      return this.executor.exec(
-        'getPhoneNumber',
-        null,
-        phoneNumber => resolve(phoneNumber),
-        error => reject(error)
-      );
-    });
-  }
 
   /**
    * This interface checks if the device contains/has the deeplink to launch
@@ -821,14 +662,6 @@ export class MiniAppBridge {
    */
   getImageFromGallery() {
     return this.galleryManager.getImageFromGallery();
-  }
-
-  /**
-   * This interface is used to know if the user login status
-   * @returns true/false based on the user profile status
-   */
-  isLoggedIn() {
-    return this.userProfileManager.isLoggedIn();
   }
 
   allowBackForwardNavigationGestures(shouldAllow: boolean) {

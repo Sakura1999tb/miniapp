@@ -41,4 +41,13 @@ export enum CommonEvents {
 export enum USERINFO {
   GET_USER_NAME = 'getUserName',
   GET_PROFILE_PHOTO = 'getProfilePhoto',
+  GET_POINT = 'getPoints',
+  GET_PHONE_NUMBER = 'getPhoneNumber',
+  IS_LOGGED_IN = 'isLoggedIn',
+  GET_ACCESS_TOKEN = 'getAccessToken',
+  GET_CONTACTS = 'getContacts',
+}
+
+export enum CHATSERVICE {
+  SEND_MESSAGE_TO_CONTACT = 'sendMessageToContact',
 }

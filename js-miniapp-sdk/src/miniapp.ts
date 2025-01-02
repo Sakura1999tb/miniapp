@@ -192,14 +192,24 @@ export class MiniApp implements MiniAppFeatures, Ad, Platform {
   /**
    * @deprecated Deprecated method for getting the uniqueId use `getMessagingUniqueId` or `getMauid` instead
    */
+  /**
+   * Deprecated method for associating getUniqueId function to MiniAppBridge object.
+   * Use `getMessagingUniqueId` or `getMauid` instead
+   */
   getUniqueId(): Promise<string> {
     return getBridge().sendToNative(CommonEvents.GET_UNIQUE_ID, null);
   }
 
+  /**
+   * Associating getMessagingUniqueId function to MiniAppBridge object.
+   */
   getMessagingUniqueId(): Promise<string> {
     return getBridge().sendToNative(CommonEvents.GET_UNIQUE_ID, null);
   }
 
+  /**
+   * Associating getMauid function to MiniAppBridge object.
+   */
   getMauid(): Promise<string> {
     return getBridge().sendToNative(CommonEvents.GET_MAU_ID, null);
   }
@@ -235,6 +245,18 @@ export class MiniApp implements MiniAppFeatures, Ad, Platform {
       );
   }
 
+  /**
+   * Associating requestCustomPermissions function to MiniAppBridge object
+   * @param [CustomPermissionType[] permissionTypes, Types of custom permissions that are requested
+   * using an Array including the parameters eg. name, description.
+   *
+   * For eg., Miniapps can pass the array of valid custom permissions as following
+   * [
+   *  {"name":"rakuten.miniapp.user.USER_NAME", "description": "Reason to request for the custom permission"},
+   *  {"name":"rakuten.miniapp.user.PROFILE_PHOTO", "description": "Reason to request for the custom permission"},
+   *  {"name":"rakuten.miniapp.user.CONTACT_LIST", "description": "Reason to request for the custom permission"}
+   * ]
+   */
   requestCustomPermissions(
     permissions: CustomPermission[]
   ): Promise<CustomPermissionResult[]> {
@@ -245,6 +267,12 @@ export class MiniApp implements MiniAppFeatures, Ad, Platform {
       .then(permissionResult => permissionResult.permissions);
   }
 
+  /**
+   * Associating loadInterstitialAd function to MiniAppBridge object.
+   * This function preloads interstitial ad before they are requested for display.
+   * Can be called multiple times to pre-load multiple ads.
+   * @param {string} id ad unit id of the interstitial ad that needs to be loaded.
+   */
   loadInterstitialAd(id: string): Promise<string> {
     return getBridge().sendToNative(CommonEvents.LOAD_AD, {
       adType: AdTypes.INTERSTITIAL,
@@ -252,6 +280,12 @@ export class MiniApp implements MiniAppFeatures, Ad, Platform {
     });
   }
 
+  /**
+   * Associating loadRewardedAd function to MiniAppBridge object.
+   * This function preloads Rewarded ad before they are requested for display.
+   * Can be called multiple times to pre-load multiple ads.
+   * @param {string} id ad unit id of the Rewarded ad that needs to be loaded.
+   */
   loadRewardedAd(id: string): Promise<string> {
     return getBridge().sendToNative(CommonEvents.LOAD_AD, {
       adType: AdTypes.REWARDED,
@@ -259,6 +293,10 @@ export class MiniApp implements MiniAppFeatures, Ad, Platform {
     });
   }
 
+  /**
+   * Associating showInterstitialAd function to MiniAppBridge object.
+   * @param {string} id ad unit id of the intertitial ad
+   */
   showInterstitialAd(id: string): Promise<string> {
     return getBridge().sendToNative(CommonEvents.SHOW_AD, {
       adType: AdTypes.INTERSTITIAL,
@@ -266,6 +304,10 @@ export class MiniApp implements MiniAppFeatures, Ad, Platform {
     });
   }
 
+  /**
+   * Associating showRewardedAd function to MiniAppBridge object.
+   * @param {string} id ad unit id of the Rewarded ad
+   */
   showRewardedAd(id: string): Promise<Reward> {
     return getBridge().sendToNative(CommonEvents.SHOW_AD, {
       adType: AdTypes.REWARDED,
@@ -273,17 +315,25 @@ export class MiniApp implements MiniAppFeatures, Ad, Platform {
     });
   }
 
-  shareInfo(info: ShareInfoType): Promise<string> {
-    return MiniAppUtils.convertBlobToNumberArray(info.imageBlob).then(blob => {
-      const shareInfo: ShareInfo = {
-        content: info.content,
-        url: info.url,
-        imageData: blob.length ? blob : undefined,
-      };
-      return getBridge().sendToNative(CommonEvents.SHARE_INFO, shareInfo);
-    });
+  /**
+   * Associating shareInfo function to MiniAppBridge object.
+   * This function returns the shared info action state.
+   * @param {info} The shared info object.
+   */
+  async shareInfo(info: ShareInfoType): Promise<string> {
+    const blob = await MiniAppUtils.convertBlobToNumberArray(info.imageBlob);
+    const shareInfo: ShareInfo = {
+      content: info.content,
+      url: info.url,
+      imageData: blob.length ? blob : undefined,
+    };
+    return await getBridge().sendToNative(CommonEvents.SHARE_INFO, shareInfo);
   }
 
+  /**
+   * Get the platform which injects this bridge.
+   * @returns The platform name. It could be 'Android' or 'iOS'.
+   */
   getPlatform(): string {
     let platform = 'Unknown';
     try {
@@ -292,23 +342,29 @@ export class MiniApp implements MiniAppFeatures, Ad, Platform {
     return platform;
   }
 
+  /**
+   * This function does not return anything back on success.
+   * @param {screenAction} The screen state that miniapp wants to set on device.
+   */
   setScreenOrientation(screenOrientation: ScreenOrientation): Promise<string> {
     return getBridge().sendToNative(CommonEvents.SET_SCREEN_ORIENTATION, {
       action: screenOrientation,
     });
   }
 
+  /**
+   * Associating get point balance function to MiniAppBridge object.
+   * (provided rakuten.miniapp.user.POINTS is allowed by the user)
+   */
   getPoints(): Promise<Points> {
     return getBridge().sendToNative(CommonEvents.GET_POINTS, null);
   }
 
-  getHostEnvironmentInfo(): Promise<HostEnvironmentInfo> {
-    return getBridge()
-      .sendToNative(CommonEvents.GET_HOST_ENVIRONMENT_INFO, null)
-      .then(info => {
-        info.platform = getBridge().platform as HostPlatform;
-        return BridgeInfoConverter.convertJsonToPlatformInfo(info);
-      });
+  async getHostEnvironmentInfo(): Promise<HostEnvironmentInfo> {
+    const info = await getBridge()
+      .sendToNative(CommonEvents.GET_HOST_ENVIRONMENT_INFO, null);
+    info.platform = getBridge().platform as HostPlatform;
+    return BridgeInfoConverter.convertJsonToPlatformInfo(info);
   }
 
   downloadFile(
@@ -334,6 +390,10 @@ export class MiniApp implements MiniAppFeatures, Ad, Platform {
       });
   }
 
+  /**
+   * @param alertInfo Close confirmation alert info.
+   * @see {setCloseAlert}
+   */
   setCloseAlert(alertInfo: CloseAlertInfo): Promise<string> {
     return getBridge().sendToNative(CommonEvents.SET_CLOSE_ALERT, {
       closeAlertInfo: alertInfo,
