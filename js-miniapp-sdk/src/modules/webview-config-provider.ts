@@ -1,3 +1,5 @@
+import { WEBCONFIG } from '../event-types';
+import { MiniAppBridgeUtils } from '../helpers/utils/miniapp-bridge-utils';
 import { getBridge } from '../sdkbridge';
 
 /**
@@ -22,6 +24,11 @@ export class WebviewManager implements WebViewConfigProvider {
    * @returns A promise that resolves to a boolean indicating the success of the operation.
    */
   allowBackForwardNavigationGestures(shouldAllow: boolean): Promise<boolean> {
-    return getBridge().allowBackForwardNavigationGestures(shouldAllow);
+    return getBridge()
+      .sendToNative(WEBCONFIG.ALLOW_BACK_FORWARD_NAVIGATION_GESTURES, {
+        shouldAllowNavigationGestures: shouldAllow,
+      })
+      .then(response => MiniAppBridgeUtils.BooleanValue(response))
+      .catch(error => error);
   }
 }

@@ -51,3 +51,20 @@ export enum USERINFO {
 export enum CHATSERVICE {
   SEND_MESSAGE_TO_CONTACT = 'sendMessageToContact',
 }
+
+export enum WEBCONFIG {
+  ALLOW_BACK_FORWARD_NAVIGATION_GESTURES = 'allowBackForwardNavigationGestures',
+}
+
+export enum UNIVERSAL_BRIDGE {
+  SEND_JSON_TO_HOST_APP = 'sendJsonToHostapp',
+  SEND_INFO_TO_HOST_APP = 'sendInfoToHostapp',
+}
+
+export enum SECURE_STORAGE {
+  SET_SECURE_STORAGE_ITEM = 'setSecureStorageItems',
+  GET_SECURE_STORAGE_ITEM = 'getSecureStorageItem',
+  REMOVE_SECURE_STORAGE_ITEM = 'removeSecureStorageItems',
+  CLEAR_SECURE_STORAGE = 'clearSecureStorage',
+  GET_SECURE_STORAGE_SIZE = 'getSecureStorageSize',
+}

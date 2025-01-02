@@ -28,7 +28,6 @@ import {
 import { MiniAppPreferences } from './modules/miniapp-preferences';
 import { BrowserManager } from './modules/browser-manager';
 import { GalleryManager } from './modules/gallery-manager';
-import { WebViewConfigManager } from './modules/webview-config-manager';
 
 /** @internal */
 const mabMessageQueue: Callback[] = [];
@@ -82,7 +81,6 @@ export class MiniAppBridge {
   preferences: MiniAppPreferences;
   browserManager: BrowserManager;
   galleryManager: GalleryManager;
-  webviewConfigManager: WebViewConfigManager;
 
   constructor(executor: PlatformExecutor) {
     this.executor = executor;
@@ -91,7 +89,6 @@ export class MiniAppBridge {
     this.preferences = new MiniAppPreferences(executor);
     this.browserManager = new BrowserManager(executor);
     this.galleryManager = new GalleryManager(executor);
-    this.webviewConfigManager = new WebViewConfigManager(executor);
 
     if (window) {
       window.addEventListener(
@@ -215,8 +212,7 @@ export class MiniAppBridge {
     this.executor.execEvents(queueObj);
   }
 
-
-  sendToNative(eventType, params){
+  sendToNative(eventType, params) {
     return new Promise<any>((resolve, reject) => {
       return this.executor.exec(
         eventType,
@@ -314,50 +310,6 @@ export class MiniAppBridge {
     });
   }
 
-  setSecureStorage(items: MiniAppSecureStorageKeyValues) {
-    return new Promise<undefined>((resolve, reject) => {
-      return this.executor.exec(
-        'setSecureStorageItems',
-        { secureStorageItems: items },
-        success => resolve(undefined),
-        error => reject(parseMiniAppError(error))
-      );
-    });
-  }
-
-  getSecureStorageItem(key: string) {
-    return new Promise<string>((resolve, reject) => {
-      return this.executor.exec(
-        'getSecureStorageItem',
-        { secureStorageKey: key },
-        responseData => resolve(responseData),
-        error => reject(parseMiniAppError(error))
-      );
-    });
-  }
-
-  removeSecureStorageItems(keys: [string]) {
-    return new Promise<undefined>((resolve, reject) => {
-      return this.executor.exec(
-        'removeSecureStorageItems',
-        { secureStorageKeyList: keys },
-        success => resolve(undefined),
-        error => reject(parseMiniAppError(error))
-      );
-    });
-  }
-
-  clearSecureStorage() {
-    return new Promise<undefined>((resolve, reject) => {
-      return this.executor.exec(
-        'clearSecureStorage',
-        null,
-        success => resolve(undefined),
-        error => reject(parseMiniAppError(error))
-      );
-    });
-  }
-
   getSecureStorageSize() {
     return new Promise<MiniAppSecureStorageSize>((resolve, reject) => {
       return this.executor.exec(
@@ -366,38 +318,6 @@ export class MiniAppBridge {
         responseData => {
           resolve(JSON.parse(responseData) as MiniAppSecureStorageSize);
         },
-        error => reject(parseMiniAppError(error))
-      );
-    });
-  }
-
-  /**
-   * Associating sendJsonToHostapp function to MiniAppBridge object.
-   * @param {info} JSON/String information that you would like to send to HostApp.
-   * @see {sendJsonToHostapp}
-   */
-  sendJsonToHostapp(info: string) {
-    return new Promise<string>((resolve, reject) => {
-      return this.executor.exec(
-        'sendJsonToHostapp',
-        { jsonInfo: info },
-        success => resolve(success),
-        error => reject(parseMiniAppError(error))
-      );
-    });
-  }
-
-  /**
-   * Associating sendInfoToHostapp function to MiniAppBridge object.
-   * @param {info} UniversalBridgeInfo information that you would like to send to HostApp.
-   * @see {sendInfoToHostapp}
-   */
-  sendInfoToHostapp(info: UniversalBridgeInfo) {
-    return new Promise<string>((resolve, reject) => {
-      return this.executor.exec(
-        'sendInfoToHostapp',
-        { universalBridgeInfo: info },
-        success => resolve(success),
         error => reject(parseMiniAppError(error))
       );
     });
@@ -665,9 +585,9 @@ export class MiniAppBridge {
   }
 
   allowBackForwardNavigationGestures(shouldAllow: boolean) {
-    return this.webviewConfigManager.allowBackForwardNavigationGestures(
-      shouldAllow
-    );
+    return this.webviewConfigManager
+      .allowBackForwardNavigationGestures(shouldAllow)
+
   }
 }
 
@@ -755,20 +675,4 @@ function isValidJson(str) {
     return false;
   }
   return true;
-}
-
-export class MiniAppBridgeUtils {
-  static BooleanValue(value) {
-    if (typeof value === 'boolean') {
-      return value;
-    } else if (typeof value === 'string') {
-      const lowerCaseValue = value.toLowerCase();
-      if (lowerCaseValue === 'true' || lowerCaseValue === '1') {
-        return true;
-      } else if (lowerCaseValue === 'false' || lowerCaseValue === '0') {
-        return false;
-      }
-    }
-    return false;
-  }
 }

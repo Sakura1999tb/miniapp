@@ -1,6 +1,6 @@
 import { MiniAppError } from '../../../js-miniapp-bridge/src';
 import { getBridge } from '../sdkbridge';
-import { MiniAppEvents } from '../event-types/index';
+import { MiniAppEvents, SECURE_STORAGE } from '../event-types/index';
 import {
   MiniAppSecureStorageKeyValues,
   MiniAppSecureStorageSize,
@@ -26,24 +26,51 @@ interface SecureStorageProvider {
 
 /** @internal */
 export class SecureStorageService {
-  setItems(items: MiniAppSecureStorageKeyValues): Promise<undefined> {
-    return getBridge().setSecureStorage(items);
+  setItems(
+    items: MiniAppSecureStorageKeyValues
+  ): Promise<boolean | MiniAppError> {
+    return getBridge()
+      .sendToNative(SECURE_STORAGE.SET_SECURE_STORAGE_ITEM, {
+        secureStorageItems: items,
+      })
+      .then(response => {
+        return true;
+      })
+      .catch(error => parseMiniAppError(error));
   }
 
   getItem(key: string): Promise<string> {
-    return getBridge().getSecureStorageItem(key);
+    return getBridge()
+      .sendToNative(SECURE_STORAGE.GET_SECURE_STORAGE_ITEM, {
+        secureStorageKey: key,
+      })
+      .then(responseData => responseData)
+      .catch(error => parseMiniAppError(error));
   }
 
   removeItems(key: [string]): Promise<undefined> {
-    return getBridge().removeSecureStorageItems(key);
+    return getBridge()
+      .sendToNative(SECURE_STORAGE.REMOVE_SECURE_STORAGE_ITEM, {
+        secureStorageKeyList: key,
+      })
+      .then(responseData => responseData)
+      .catch(error => parseMiniAppError(error));
   }
 
   clear(): Promise<undefined> {
-    return getBridge().clearSecureStorage();
+    return getBridge()
+      .sendToNative(SECURE_STORAGE.CLEAR_SECURE_STORAGE, null)
+      .then(responseData => responseData)
+      .catch(error => parseMiniAppError(error));
   }
 
-  size(): Promise<MiniAppSecureStorageSize> {
-    return getBridge().getSecureStorageSize();
+  size(): Promise<MiniAppSecureStorageSize | MiniAppError> {
+    return getBridge()
+      .sendToNative(SECURE_STORAGE.GET_SECURE_STORAGE_SIZE, null)
+      .then(
+        responseData => JSON.parse(responseData) as MiniAppSecureStorageSize
+      )
+      .catch(error => parseMiniAppError(error));
   }
 
   onReady(onReady: () => void) {
